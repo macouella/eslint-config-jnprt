@@ -5,7 +5,7 @@ Jest, Node, Prettier, React and Typescript
 ## Usage
 
 ```
-yarn add -D eslint-config-jnprt
+yarn add -D eslint eslint-config-jnprt
 ```
 
 ```
