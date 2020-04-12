@@ -25,3 +25,15 @@ module.exports = {
   // your overrides
 }
 ```
+
+## Useful package.json scripts
+
+```
+{
+  ...
+  "scripts": {
+    "lint": "eslint . --ext js,jsx,ts,tsx",
+    "prettier": "prettier --write \"**/*.{js,jsx,json,ts,tsx,md,mdx,css,html,yml,yaml,scss}\""
+  }
+}
+```
