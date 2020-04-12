@@ -1,0 +1,4 @@
+{
+  "upgrade": true,
+  "dep": "prod,dev,optional,bundle"
+}

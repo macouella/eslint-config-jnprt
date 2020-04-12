@@ -1,0 +1,6 @@
+node_modules
+*.tgz
+*.log
+/*.js
+/*.d.ts
+!.eslintrc.js

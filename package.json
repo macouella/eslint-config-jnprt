@@ -1,0 +1,32 @@
+{
+  "name": "eslint-config-jnprt",
+  "version": "0.0.4",
+  "scripts": {
+    "build": "tsc",
+    "update": "ncu -u"
+  },
+  "dependencies": {
+    "@types/eslint": "^6.8.0",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "babel-eslint": "^10.1.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^3.0.0",
+    "eslint-plugin-unicorn": "^18.0.1",
+    "merge-anything": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^13.11.1",
+    "eslint": "^6.8.0",
+    "npm-check-updates": "^4.1.2",
+    "ts-node": "^8.8.2",
+    "typescript": "^3.8.3"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "eslint": ">=6.0.0"
+  }
+}
