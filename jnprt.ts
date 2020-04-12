@@ -126,7 +126,7 @@ const BASE_CONFIG: Linter.Config = {
   },
 };
 
-export default function jnprtConfig(framework?: FRAMEWORK_KEYS) {
+export = jnprtConfig(framework?: FRAMEWORK_KEYS) {
   const frameworkOverride = framework ? FRAMEWORK_OVERRIDES[framework]! : [];
   const config: Linter.Config = {
     ...BASE_CONFIG,

@@ -15,3 +15,13 @@ yarn add -D eslint-config-jnprt
   // for next.js - use jnprt/next
 }
 ```
+
+## Build your own
+
+```
+const jnprtConfig = require('jnprt').default;
+module.exports = {
+  ...jnprtConfig(),
+  // your overrides
+}
+```
