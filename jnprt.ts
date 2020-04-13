@@ -75,6 +75,7 @@ const BASE_CONFIG: Linter.Config = {
         ],
         "@typescript-eslint/interface-name-prefix": "warn",
         "@typescript-eslint/no-var-requires": "warn",
+        "@typescript-eslint/no-use-before-define": "warn",
       },
     },
     {
