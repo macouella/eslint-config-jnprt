@@ -1,6 +1,6 @@
-import { Linter } from "eslint";
+import { Linter } from "eslint"
 
-type FRAMEWORK_KEYS = "next";
+type FRAMEWORK_KEYS = "next"
 
 const FRAMEWORK_OVERRIDES: Partial<Record<FRAMEWORK_KEYS, Array<Linter.ConfigOverride>>> = {
   next: [
@@ -17,7 +17,7 @@ const FRAMEWORK_OVERRIDES: Partial<Record<FRAMEWORK_KEYS, Array<Linter.ConfigOve
       },
     },
   ],
-};
+}
 
 const BASE_CONFIG: Linter.Config = {
   env: {
@@ -32,7 +32,6 @@ const BASE_CONFIG: Linter.Config = {
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:react/recommended",
-    "prettier",
   ],
   overrides: [
     {
@@ -46,7 +45,6 @@ const BASE_CONFIG: Linter.Config = {
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:import/typescript",
-        "prettier/@typescript-eslint",
       ],
       files: ["**/*.ts", "**/*.tsx"],
       parser: "@typescript-eslint/parser",
@@ -124,13 +122,13 @@ const BASE_CONFIG: Linter.Config = {
       version: "detect",
     },
   },
-};
+}
 
 export default function jnprtConfig(framework?: FRAMEWORK_KEYS) {
-  const frameworkOverride = framework ? FRAMEWORK_OVERRIDES[framework]! : [];
+  const frameworkOverride = framework ? FRAMEWORK_OVERRIDES[framework]! : []
   const config: Linter.Config = {
     ...BASE_CONFIG,
     overrides: [...BASE_CONFIG.overrides!, ...frameworkOverride],
-  };
-  return config;
+  }
+  return config
 }

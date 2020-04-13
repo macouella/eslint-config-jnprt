@@ -1,3 +1,3 @@
-import jnprtConfig from "./jnprt";
+import jnprtConfig from "./jnprt"
 
-export = jnprtConfig("next");
+export = jnprtConfig("next")

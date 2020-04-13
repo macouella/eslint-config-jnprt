@@ -1,6 +1,6 @@
 # eslint-config-jnprt
 
-Jest, Node, Prettier, React and Typescript
+Jest, Node, React and Typescript
 
 ## Usage
 
@@ -32,8 +32,7 @@ module.exports = {
 {
   ...
   "scripts": {
-    "lint": "eslint . --ext js,jsx,ts,tsx",
-    "prettier": "prettier --write \"**/*.{js,jsx,json,ts,tsx,md,mdx,css,html,yml,yaml,scss}\""
+    "lint": "eslint . --ext js,jsx,ts,tsx"
   }
 }
 ```
