@@ -1,10 +1,10 @@
 {
   "name": "eslint-config-jnprt",
-  "version": "0.0.4",
+  "version": "0.0.4rc7",
   "scripts": {
     "build": "tsc",
     "update": "ncu -u",
-    "prepublishOnly": "yarn build",
+    "prepack": "yarn build",
     "lint": "eslint . --ext js,jsx,ts,tsx"
   },
   "dependencies": {
@@ -40,7 +40,6 @@
     }
   },
   "prettier": {
-    "semi": false,
-    "printWidth": 100
+    "semi": false
   }
 }

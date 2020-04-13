@@ -2,7 +2,10 @@ import { Linter } from "eslint"
 
 type FRAMEWORK_KEYS = "next"
 
-const FRAMEWORK_OVERRIDES: Partial<Record<FRAMEWORK_KEYS, Array<Linter.ConfigOverride>>> = {
+const FRAMEWORK_OVERRIDES: Partial<Record<
+  FRAMEWORK_KEYS,
+  Array<Linter.ConfigOverride>
+>> = {
   next: [
     {
       files: ["**/pages/**/*.{jsx,tsx}"],
@@ -19,6 +22,30 @@ const FRAMEWORK_OVERRIDES: Partial<Record<FRAMEWORK_KEYS, Array<Linter.ConfigOve
   ],
 }
 
+const buildExtends = (type: "js" | "ts") => {
+  const isJS = type === "js"
+  const isTS = type === "ts"
+  return [
+    isJS && "eslint:recommended",
+
+    "plugin:unicorn/recommended",
+
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    isTS && "plugin:import/typescript",
+
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+
+    isTS && "plugin:@typescript-eslint/eslint-recommended",
+    isTS && "plugin:@typescript-eslint/recommended",
+
+    "prettier",
+    "prettier/react",
+    isTS && "prettier/@typescript-eslint",
+  ].filter(Boolean) as string[]
+}
+
 const BASE_CONFIG: Linter.Config = {
   env: {
     browser: true,
@@ -26,15 +53,7 @@ const BASE_CONFIG: Linter.Config = {
     es6: true,
     node: true,
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:unicorn/recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:react/recommended",
-    "prettier",
-    "prettier/react",
-  ],
+  extends: buildExtends("js"),
   overrides: [
     {
       env: {
@@ -43,17 +62,10 @@ const BASE_CONFIG: Linter.Config = {
       files: ["**/__tests__/**", "**/*.{test|spec}.{js,ts,tsx,jsx}"],
     },
     {
-      extends: [
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:import/typescript",
-        "prettier",
-        "prettier/@typescript-eslint",
-        "prettier/react",
-      ],
       files: ["**/*.ts", "**/*.tsx"],
       parser: "@typescript-eslint/parser",
       plugins: ["@typescript-eslint"],
+      extends: buildExtends("ts"),
       rules: {
         "@typescript-eslint/camelcase": [
           "warn",
