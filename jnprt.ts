@@ -32,6 +32,8 @@ const BASE_CONFIG: Linter.Config = {
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:react/recommended",
+    "prettier",
+    "prettier/react",
   ],
   overrides: [
     {
@@ -45,6 +47,7 @@ const BASE_CONFIG: Linter.Config = {
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:import/typescript",
+        "prettier/@typescript-eslint",
       ],
       files: ["**/*.ts", "**/*.tsx"],
       parser: "@typescript-eslint/parser",

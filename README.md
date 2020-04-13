@@ -1,6 +1,6 @@
 # eslint-config-jnprt
 
-Jest, Node, React and Typescript
+Jest, Node, Prettier, React/Preact and Typescript
 
 ## Usage
 
