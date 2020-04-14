@@ -46,6 +46,28 @@ const buildExtends = (type: "js" | "ts") => {
   ].filter(Boolean) as string[]
 }
 
+const buildRules = () => {
+  return {
+    "import/order": [
+      "error",
+      {
+        alphabetize: {
+          caseInsensitive: true,
+          order: "asc",
+        },
+        "newlines-between": "never",
+      },
+    ],
+    "no-unused-vars": "warn",
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "warn",
+    "unicorn/prevent-abbreviations": "warn",
+    "no-useless-escape": "warn",
+    "react/react-in-jsx-scope": "off",
+    "unicorn/no-abusive-eslint-disable": "warn",
+  } as Linter.Config["rules"]
+}
+
 const BASE_CONFIG: Linter.Config = {
   env: {
     browser: true,
@@ -67,6 +89,7 @@ const BASE_CONFIG: Linter.Config = {
       plugins: ["@typescript-eslint"],
       extends: buildExtends("ts"),
       rules: {
+        ...buildRules(),
         "@typescript-eslint/camelcase": [
           "warn",
           {
@@ -76,6 +99,18 @@ const BASE_CONFIG: Linter.Config = {
         "@typescript-eslint/interface-name-prefix": "warn",
         "@typescript-eslint/no-var-requires": "warn",
         "@typescript-eslint/no-use-before-define": "warn",
+
+        // see https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/FAQ.md#eslint-plugin-import
+        "import/named": "off",
+        "import/namespace": "off",
+        "import/default": "off",
+        "import/no-named-as-default-member": "off",
+
+        // @TODO - run in ci/cd, maybe toggle with an env var
+        "import/no-named-as-default": "off",
+        "import/no-cycle": "off",
+        "import/no-unused-modules": "off",
+        "import/no-deprecated": "off",
       },
     },
     {
@@ -104,37 +139,7 @@ const BASE_CONFIG: Linter.Config = {
   },
   plugins: ["unicorn", "react", "react-hooks"],
   root: true,
-  rules: {
-    "import/order": [
-      "error",
-      {
-        alphabetize: {
-          caseInsensitive: true,
-          order: "asc",
-        },
-        "newlines-between": "never",
-      },
-    ],
-    "no-useless-escape": "warn",
-    "react/react-in-jsx-scope": "off",
-    "unicorn/prevent-abbreviations": [
-      "error",
-      {
-        replacements: {
-          args: false,
-          cmd: false,
-          conf: false,
-          ctx: false,
-          e: false,
-          env: false,
-          num: false,
-          props: false,
-          req: false,
-          res: false,
-        },
-      },
-    ],
-  },
+  rules: buildRules(),
   settings: {
     react: {
       version: "detect",
