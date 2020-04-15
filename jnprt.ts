@@ -376,8 +376,8 @@ export default function jnprtConfig(
         jest: true,
       },
     },
-    ...presetConfigOverrides,
     ...(isEnableReact ? ESLINT_REACT_OVERRIDES : []),
+    ...presetConfigOverrides,
   ]
 
   const config: Linter.Config = {
