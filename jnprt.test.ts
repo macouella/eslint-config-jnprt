@@ -502,22 +502,6 @@ describe("jnprtConfig", () => {
             },
             Object {
               "files": Array [
-                "**/pages/**/*.{jsx,tsx}",
-              ],
-              "rules": Object {
-                "unicorn/filename-case": Array [
-                  "error",
-                  Object {
-                    "case": "kebabCase",
-                    "ignore": Array [
-                      "[A-Z]+.(j|t)sx",
-                    ],
-                  },
-                ],
-              },
-            },
-            Object {
-              "files": Array [
                 "**/*.{jsx,tsx}",
               ],
               "rules": Object {
@@ -541,6 +525,22 @@ describe("jnprtConfig", () => {
                       "camelCase": true,
                       "pascalCase": true,
                     },
+                    "ignore": Array [
+                      "[A-Z]+.(j|t)sx",
+                    ],
+                  },
+                ],
+              },
+            },
+            Object {
+              "files": Array [
+                "**/pages/**/*.{jsx,tsx}",
+              ],
+              "rules": Object {
+                "unicorn/filename-case": Array [
+                  "error",
+                  Object {
+                    "case": "kebabCase",
                     "ignore": Array [
                       "[A-Z]+.(j|t)sx",
                     ],
