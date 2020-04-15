@@ -160,16 +160,6 @@ const ESLINT_RULES = {
         format: ["camelCase", "snake_case", "UPPER_CASE"],
         leadingUnderscore: "allow",
       },
-      // Enforce that boolean variables are prefixed with an allowed verb. e.g.
-      // isRight shouldGo hasRecords canDoIt didExecute willGoSomewhere
-      // is_right should_go has_records can_do_it did_execute will_go_somewhere
-      {
-        selector: "variable",
-        types: ["boolean"],
-        format: ["PascalCase", "snake_case"],
-        prefix: ["is", "should", "has", "can", "did", "will"],
-        leadingUnderscore: "allow",
-      },
       // Parameters (primitive and object-based arguments).
       // (camelCase, snake_case, {innerKey, inner_key}) => {}
       {

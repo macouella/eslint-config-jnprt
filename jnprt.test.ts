@@ -69,25 +69,6 @@ describe("jnprtConfig", () => {
                   },
                   Object {
                     "format": Array [
-                      "PascalCase",
-                      "snake_case",
-                    ],
-                    "leadingUnderscore": "allow",
-                    "prefix": Array [
-                      "is",
-                      "should",
-                      "has",
-                      "can",
-                      "did",
-                      "will",
-                    ],
-                    "selector": "variable",
-                    "types": Array [
-                      "boolean",
-                    ],
-                  },
-                  Object {
-                    "format": Array [
                       "camelCase",
                       "snake_case",
                     ],
@@ -368,25 +349,6 @@ describe("jnprtConfig", () => {
                     ],
                     "leadingUnderscore": "allow",
                     "selector": "variable",
-                  },
-                  Object {
-                    "format": Array [
-                      "PascalCase",
-                      "snake_case",
-                    ],
-                    "leadingUnderscore": "allow",
-                    "prefix": Array [
-                      "is",
-                      "should",
-                      "has",
-                      "can",
-                      "did",
-                      "will",
-                    ],
-                    "selector": "variable",
-                    "types": Array [
-                      "boolean",
-                    ],
                   },
                   Object {
                     "format": Array [
@@ -678,25 +640,6 @@ describe("jnprtConfig", () => {
                     ],
                     "leadingUnderscore": "allow",
                     "selector": "variable",
-                  },
-                  Object {
-                    "format": Array [
-                      "PascalCase",
-                      "snake_case",
-                    ],
-                    "leadingUnderscore": "allow",
-                    "prefix": Array [
-                      "is",
-                      "should",
-                      "has",
-                      "can",
-                      "did",
-                      "will",
-                    ],
-                    "selector": "variable",
-                    "types": Array [
-                      "boolean",
-                    ],
                   },
                   Object {
                     "format": Array [
