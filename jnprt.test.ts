@@ -70,6 +70,7 @@ describe("jnprtConfig", () => {
                   Object {
                     "format": Array [
                       "PascalCase",
+                      "snake_case",
                     ],
                     "leadingUnderscore": "allow",
                     "prefix": Array [
@@ -371,6 +372,7 @@ describe("jnprtConfig", () => {
                   Object {
                     "format": Array [
                       "PascalCase",
+                      "snake_case",
                     ],
                     "leadingUnderscore": "allow",
                     "prefix": Array [
@@ -680,6 +682,7 @@ describe("jnprtConfig", () => {
                   Object {
                     "format": Array [
                       "PascalCase",
+                      "snake_case",
                     ],
                     "leadingUnderscore": "allow",
                     "prefix": Array [
