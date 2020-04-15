@@ -1,1 +1,3 @@
-module.exports = require("./")
+const config = require("./typescript")
+
+module.exports = config

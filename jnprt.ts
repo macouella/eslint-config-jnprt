@@ -1,15 +1,20 @@
 import { Linter } from "eslint"
 
-type FRAMEWORK_KEYS = "next"
+export enum PRESET_TYPES {
+  DEFAULT = "default",
+  NEXT = "next",
+  TYPESCRIPT = "typescript",
+}
 
-const FRAMEWORK_OVERRIDES: Partial<Record<
-  FRAMEWORK_KEYS,
+const ESLINT_PRESET_EXTRA_OVERRIDES: Partial<Record<
+  PRESET_TYPES,
   Array<Linter.ConfigOverride>
 >> = {
-  next: [
+  [PRESET_TYPES.NEXT]: [
     {
       files: ["**/pages/**/*.{jsx,tsx}"],
       rules: {
+        // allows kebab-case files in next.js to respect filename-based routing
         "unicorn/filename-case": [
           "error",
           {
@@ -22,32 +27,50 @@ const FRAMEWORK_OVERRIDES: Partial<Record<
   ],
 }
 
-const buildExtends = (type: "js" | "ts") => {
-  const isJS = type === "js"
-  const isTS = type === "ts"
-  return [
-    isJS && "eslint:recommended",
+const ESLINT_REACT_OVERRIDES: Linter.ConfigOverride<Linter.RulesRecord>[] = [
+  {
+    // JSX-specific rules
+    files: ["**/*.{jsx,tsx}"],
+    rules: {
+      // Replaces the Typescript rules so that we can also allow
+      // ComponentPascalNaming
+      "@typescript-eslint/naming-convention": [
+        "error",
+        {
+          selector: "variable",
+          format: ["camelCase", "PascalCase", "snake_case", "UPPER_CASE"],
+          leadingUnderscore: "allow",
+        },
+      ],
+      // Allows the following filenames for JSX/TSX files: camelCase.tsx
+      // PascalCase.tsx and ALL_UPPERCASE.tsx
+      "unicorn/filename-case": [
+        "error",
+        {
+          cases: {
+            camelCase: true,
+            pascalCase: true,
+          },
+          ignore: ["[A-Z]+.(j|t)sx"],
+        },
+      ],
+    },
+  },
+]
 
-    "plugin:unicorn/recommended",
+// Warns about unused variables. Arguments are left alone as it is useful at
+// times to leave them in function signatures. Rest siblings are left
+// alone too as destructuring can be used to omit object values.
+const NO_UNUSED_RULE = ["warn", { args: "none", ignoreRestSiblings: true }]
 
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    isTS && "plugin:import/typescript",
-
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-
-    isTS && "plugin:@typescript-eslint/eslint-recommended",
-    isTS && "plugin:@typescript-eslint/recommended",
-
-    "prettier",
-    "prettier/react",
-    isTS && "prettier/@typescript-eslint",
-  ].filter(Boolean) as string[]
-}
-
-const buildRules = () => {
-  return {
+// ESLint Rules to combine based on a selected preset
+const ESLINT_RULES = {
+  eslint: {
+    // variable names should be longer than 2 chars
+    "id-length": "warn",
+  },
+  import: {
+    // imports need to be in alphabetical order
     "import/order": [
       "error",
       {
@@ -58,100 +81,321 @@ const buildRules = () => {
         "newlines-between": "never",
       },
     ],
-    "no-unused-vars": "warn",
+  },
+  react: {
+    // > and } entities need to be escaped e.g. {'>'}
+    "react/no-unescaped-entities": [
+      "error",
+      {
+        forbid: [">", "}"],
+      },
+    ],
+    // Disables prop-type checks since we're on Typescript
     "react/prop-types": "off",
-    "react/no-unescaped-entities": "warn",
-    "unicorn/prevent-abbreviations": "warn",
-    "no-useless-escape": "warn",
+    // Disables import React checks since it's injected through webpack / babel
     "react/react-in-jsx-scope": "off",
-    "unicorn/no-abusive-eslint-disable": "warn",
-  } as Linter.Config["rules"]
+  },
+  unicorn: {
+    // Disables catch error name checks as we're already checking via id-length
+    // and unicorn/prevent-abbreviations
+    "unicorn/catch-error-name": "off",
+
+    // Prevents bad abbreviations in our code. Overrides unicorn's defaults with
+    // a more flexible one, and stops eslint --fix from breaking our code. We're
+    // using eslint's id-length to do quick checks against really short variable
+    // names (e.g. const x = 1)
+    "unicorn/prevent-abbreviations": [
+      "warn",
+      {
+        extendDefaultReplacements: false,
+        // When linting, each of the keys will have a list of suggestions.
+        replacements: {
+          // val is probably the worst way to name a variable so let's catch it
+          val: {
+            beExplicit: true,
+            value: true,
+          },
+          // eslint-disable-next-line id-length
+          e: {
+            event: true,
+            error: true,
+          },
+        },
+      },
+    ],
+  },
+  typescript: {
+    // Disables interface prefixing in favour of
+    // @typescript-eslint/naming-convention
+    "@typescript-eslint/interface-name-prefix": "off",
+    // Disables camelCasing in favour of @typescript-eslint/naming-convention
+    "@typescript-eslint/camelcase": "off",
+
+    // Disables explicit return types as derived types are a common occurence in
+    // code
+    "@typescript-eslint/explicit-function-return-type": "off",
+
+    "@typescript-eslint/no-var-requires": "warn",
+
+    // Warns about variables being used before being defined. @typescript-eslint
+    // sets this as an error by default.
+    "@typescript-eslint/no-use-before-define": "warn",
+    "@typescript-eslint/no-unused-vars": NO_UNUSED_RULE,
+
+    // Enforce naming conventions across the whole code-base. Built from the
+    // eslint camelCase and IPrefixing bases.
+    "@typescript-eslint/naming-convention": [
+      "error",
+      // Fallback - everything should be in camelCase
+      {
+        selector: "default",
+        format: ["camelCase"],
+        leadingUnderscore: "allow",
+      },
+      // Variable assignment. camelCase should be used for most variables,
+      // UPPER_CASE for constants and snake_case to support various code that
+      // use it.
+      {
+        selector: "variable",
+        format: ["camelCase", "snake_case", "UPPER_CASE"],
+        leadingUnderscore: "allow",
+      },
+      // Enforce that boolean variables are prefixed with an allowed verb. e.g.
+      // isRight shouldGo hasRecords canDoIt didExecute willGoSomewhere
+      {
+        selector: "variable",
+        types: ["boolean"],
+        format: ["PascalCase"],
+        prefix: ["is", "should", "has", "can", "did", "will"],
+        leadingUnderscore: "allow",
+      },
+      // Parameters (primitive and object-based arguments).
+      // (camelCase, snake_case, {innerKey, inner_key}) => {}
+      {
+        selector: "parameter",
+        format: ["camelCase", "snake_case"],
+        leadingUnderscore: "allow",
+      },
+      // Object/class properties. Allows several formats to widen support.
+      {
+        selector: "property",
+        format: ["camelCase", "PascalCase", "snake_case", "UPPER_CASE"],
+        leadingUnderscore: "allow",
+      },
+      // Typescript types
+      {
+        selector: "typeLike",
+        format: ["PascalCase", "UPPER_CASE"],
+      },
+      // Typescript enums
+      {
+        selector: "enum",
+        format: ["PascalCase", "UPPER_CASE"],
+      },
+      // Typescript enum properties
+      {
+        selector: "enumMember",
+        format: ["PascalCase", "UPPER_CASE"],
+      },
+      // Typescript interfaces. Our rule does not prohibit using underscores,
+      // or prefixes (e.g. I). People should be left free to write how they
+      // want.
+      {
+        selector: "interface",
+        format: ["PascalCase"],
+        leadingUnderscore: "allow",
+      },
+    ],
+
+    // Disables the following rules as they break with @typescript-eslint
+    // https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/FAQ.md#eslint-plugin-import
+    "import/named": "off",
+    "import/namespace": "off",
+    "import/default": "off",
+    "import/no-named-as-default-member": "off",
+
+    // These are disabled for dev environments, to keep linting fast. They may
+    // be enabled for CI/CD to provide deeper linting insights.
+    "import/no-named-as-default": "off",
+    "import/no-cycle": "off",
+    "import/no-unused-modules": "off",
+    "import/no-deprecated": "off",
+  },
+  javascript: {
+    "no-unused-vars": NO_UNUSED_RULE,
+  },
 }
 
-const BASE_CONFIG: Linter.Config = {
-  env: {
-    browser: true,
-    commonjs: true,
-    es6: true,
-    node: true,
-  },
-  extends: buildExtends("js"),
-  overrides: [
-    {
-      env: {
-        jest: true,
-      },
-      files: ["**/__tests__/**", "**/*.{test|spec}.{js,ts,tsx,jsx}"],
-    },
-    {
-      files: ["**/*.ts", "**/*.tsx"],
-      parser: "@typescript-eslint/parser",
-      plugins: ["@typescript-eslint"],
-      extends: buildExtends("ts"),
-      rules: {
-        ...buildRules(),
-        "@typescript-eslint/camelcase": [
-          "warn",
-          {
-            properties: "never",
-          },
-        ],
-        "@typescript-eslint/interface-name-prefix": "warn",
-        "@typescript-eslint/no-var-requires": "warn",
-        "@typescript-eslint/no-use-before-define": "warn",
+/**
+ * Creates the extends config.
+ * @param type enable extends by type.
+ * @param isEnableReact enable react support.
+ */
+const buildESLintExtends = (type: "js" | "ts", isEnableReact: boolean) => {
+  const isTS = type === "ts"
+  return [
+    // use eslint as base
+    "eslint:recommended",
 
-        // see https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/FAQ.md#eslint-plugin-import
-        "import/named": "off",
-        "import/namespace": "off",
-        "import/default": "off",
-        "import/no-named-as-default-member": "off",
+    // use unicorn's base
+    "plugin:unicorn/recommended",
 
-        // @TODO - run in ci/cd, maybe toggle with an env var
-        "import/no-named-as-default": "off",
-        "import/no-cycle": "off",
-        "import/no-unused-modules": "off",
-        "import/no-deprecated": "off",
+    // use imports's base
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    // enables import typescript support
+    isTS && "plugin:import/typescript",
+
+    // use react's base
+    isEnableReact && "plugin:react/recommended",
+    // use react's hooks base
+    isEnableReact && "plugin:react-hooks/recommended",
+
+    // enables eslint-recommended typescript support
+    isTS && "plugin:@typescript-eslint/eslint-recommended",
+    // enables @typescript-eslint's base
+    isTS && "plugin:@typescript-eslint/recommended",
+
+    // turns off prettier-related rules
+    "prettier",
+    // enables prettier react support
+    isEnableReact && "prettier/react",
+    // enables prettier support for typescript
+    isEnableReact && isTS && "prettier/@typescript-eslint",
+  ].filter(Boolean) as string[]
+}
+
+/**
+ * Builds rules for eslint.
+ * @param type enable rules by type.
+ * @param isEnableReact enable react support.
+ */
+const buildESLintRules = (
+  type: "js" | "ts",
+  isEnableReact: boolean
+): Linter.Config["rules"] => {
+  const isTS = type === "ts"
+  const baseRules = {
+    ...ESLINT_RULES.eslint,
+    ...ESLINT_RULES.import,
+    ...(isEnableReact && ESLINT_RULES.react),
+    ...ESLINT_RULES.unicorn,
+  }
+  if (isTS) {
+    Object.assign(baseRules, ESLINT_RULES.typescript)
+  } else {
+    Object.assign(baseRules, ESLINT_RULES.javascript)
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return baseRules as any
+}
+
+/**
+ * Builds an eslint config based on a given preset.
+ * @param presets default, next, typescript
+ *
+ * default - jest, node, prettier, typescript, react
+ * typescript - jest, node, prettier, typescript support
+ * next - same as default, but with overrides
+ *
+ * The following parsers are used:
+ * babel-eslint - js
+ * @typescript-eslint/parser - ts
+ *
+ * The following plugins are used:
+ * eslint-plugin-import
+ * eslint-plugin-promise
+ * eslint-plugin-unicorn
+ *
+ * And with react support, these are enabled:
+ * eslint-plugin-react
+ * eslint-plugin-react-hooks
+ */
+export default function jnprtConfig(
+  preset: PRESET_TYPES = PRESET_TYPES.DEFAULT
+) {
+  // Prepare react-specific configs
+  const isEnableReact = [PRESET_TYPES.DEFAULT, PRESET_TYPES.NEXT].includes(
+    preset
+  )
+  const jestExtensions = [
+    "js",
+    "ts",
+    isEnableReact && "tsx",
+    isEnableReact && "jsx",
+  ]
+    .filter(Boolean)
+    .join(",")
+
+  const plugins = [
+    "unicorn",
+    isEnableReact && "react",
+    isEnableReact && "react-hooks",
+  ].filter(Boolean) as string[]
+
+  const settings: Linter.BaseConfig<Linter.RulesRecord>["settings"] = {
+    ...(isEnableReact && {
+      react: {
+        version: "detect",
       },
-    },
-    {
-      files: ["**/*.{jsx,tsx}"],
-      rules: {
-        "unicorn/filename-case": [
-          "error",
-          {
-            cases: {
-              camelCase: true,
-              pascalCase: true,
-            },
-            ignore: ["[A-Z]+.(j|t)sx"],
-          },
-        ],
-      },
-    },
-  ],
-  parser: "babel-eslint",
-  parserOptions: {
+    }),
+  }
+
+  const parserOptions: Linter.ParserOptions = {
     ecmaFeatures: {
-      jsx: true,
+      ...(isEnableReact && {
+        jsx: true,
+      }),
     },
     ecmaVersion: 2020,
     sourceType: "module",
-  },
-  plugins: ["unicorn", "react", "react-hooks"],
-  root: true,
-  rules: buildRules(),
-  settings: {
-    react: {
-      version: "detect",
-    },
-  },
-}
-
-export default function jnprtConfig(framework?: FRAMEWORK_KEYS) {
-  const frameworkOverride = framework ? FRAMEWORK_OVERRIDES[framework]! : []
-  const config: Linter.Config = {
-    ...BASE_CONFIG,
-    overrides: [...BASE_CONFIG.overrides!, ...frameworkOverride],
   }
+
+  // Preset-specific global overrides
+  const presetConfigOverrides = ESLINT_PRESET_EXTRA_OVERRIDES[preset] || []
+
+  // Build preset-based extends and rulesets
+  const globalExtends = buildESLintExtends("js", isEnableReact)
+  const globalRules = buildESLintRules("js", isEnableReact)
+
+  const globalOverrides: Linter.ConfigOverride<Linter.RulesRecord>[] = [
+    // Typescript rules
+    {
+      files: ["**/*.ts", isEnableReact && "**/*.tsx"].filter(
+        Boolean
+      ) as string[],
+      parser: "@typescript-eslint/parser",
+      plugins: ["@typescript-eslint"],
+      extends: buildESLintExtends("ts", isEnableReact),
+      rules: buildESLintRules("ts", isEnableReact),
+    },
+    // Jest-specific rules
+    {
+      files: ["**/__tests__/**", `**/*.{test|spec}.{${jestExtensions}}`],
+      env: {
+        jest: true,
+      },
+    },
+    ...presetConfigOverrides,
+    ...(isEnableReact ? ESLINT_REACT_OVERRIDES : []),
+  ]
+
+  const config: Linter.Config = {
+    root: true,
+    extends: globalExtends,
+    parser: "babel-eslint",
+    parserOptions,
+    plugins,
+    settings,
+    rules: globalRules,
+    overrides: globalOverrides,
+    env: {
+      browser: true,
+      commonjs: true,
+      es6: true,
+      node: true,
+    },
+  }
+
   return config
 }

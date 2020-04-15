@@ -1,6 +1,6 @@
 # eslint-config-jnprt
 
-Jest, Node, Prettier, React/Preact and Typescript
+Jest, Node, Prettier, React/Preact (can be disabled) and Typescript
 
 ## Usage
 
@@ -13,6 +13,7 @@ yarn add -D eslint eslint-config-jnprt
 {
   "extends": ["jnprt"]
   // for next.js - use jnprt/next
+  // for typescript-only - use jnprt/typescript
 }
 ```
 
