@@ -7,7 +7,7 @@
     "prepack": "yarn build",
     "prepublishOnly": "yarn test",
     "lint": "eslint . --ext ts",
-    "test": "jest"
+    "test": "jest --forceExit"
   },
   "dependencies": {
     "@types/eslint": "^7.2.4",
