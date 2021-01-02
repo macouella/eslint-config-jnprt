@@ -6,10 +6,9 @@ export enum PRESET_TYPES {
   TYPESCRIPT = "typescript",
 }
 
-const ESLINT_PRESET_EXTRA_OVERRIDES: Partial<Record<
-  PRESET_TYPES,
-  Array<Linter.ConfigOverride>
->> = {
+const ESLINT_PRESET_EXTRA_OVERRIDES: Partial<
+  Record<PRESET_TYPES, Array<Linter.ConfigOverride>>
+> = {
   [PRESET_TYPES.NEXT]: [
     {
       files: ["**/pages/**/*.{jsx,tsx}"],
@@ -123,6 +122,13 @@ const ESLINT_RULES = {
         },
       },
     ],
+
+    "unicorn/no-fn-reference-in-iterator": "warn",
+    "unicorn/no-null": "warn",
+    "unicorn/no-reduce": "warn",
+    "unicorn/no-useless-undefined": "warn",
+    "unicorn/prefer-optional-catch-binding": "warn",
+    "unicorn/prefer-set-has": "warn",
   },
   typescript: {
     // Disables interface prefixing in favour of
@@ -198,6 +204,24 @@ const ESLINT_RULES = {
       },
     ],
 
+    "@typescript-eslint/await-thenable": "warn",
+    "@typescript-eslint/ban-types": "warn",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-extra-non-null-assertion": "warn",
+    "@typescript-eslint/no-floating-promises": "warn",
+    "@typescript-eslint/no-misused-promises": "warn",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "warn",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-unnecessary-type-assertion": "warn",
+    "@typescript-eslint/no-unsafe-assignment": "warn",
+    "@typescript-eslint/no-unsafe-call": "warn",
+    "@typescript-eslint/no-unsafe-member-access": "warn",
+    "@typescript-eslint/no-unsafe-return": "warn",
+    "@typescript-eslint/require-await": "warn",
+    "@typescript-eslint/restrict-plus-operands": "warn",
+    "@typescript-eslint/restrict-template-expressions": "warn",
+    "@typescript-eslint/unbound-method": "warn",
+
     // Disables the following rules as they break with @typescript-eslint
     // https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/FAQ.md#eslint-plugin-import
     "import/named": "off",
@@ -246,6 +270,8 @@ const buildESLintExtends = (type: "js" | "ts", isEnableReact: boolean) => {
     isTS && "plugin:@typescript-eslint/eslint-recommended",
     // enables @typescript-eslint's base
     isTS && "plugin:@typescript-eslint/recommended",
+    // enables type checking
+    isTS && "plugin:@typescript-eslint/recommended-requiring-type-checking",
 
     // turns off prettier-related rules
     "prettier",

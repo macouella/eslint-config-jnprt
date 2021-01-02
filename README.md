@@ -17,6 +17,19 @@ yarn add -D eslint eslint-config-jnprt
 }
 ```
 
+## Typescript config
+
+When opting in for typescript linting, ensure that the following is set in your eslint config:
+
+```
+"parserOptions": {
+  "tsconfigRootDir": "./",
+  "project": ["./tsconfig.json", "./packages/**/tsconfig.json"]
+},
+```
+
+The parserOptions above allows for @typescript-eslint/recommended-requiring-type-checking support.
+
 ## Build your own
 
 ```
