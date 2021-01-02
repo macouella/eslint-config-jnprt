@@ -129,6 +129,7 @@ const ESLINT_RULES = {
     "unicorn/no-useless-undefined": "warn",
     "unicorn/prefer-optional-catch-binding": "warn",
     "unicorn/prefer-set-has": "warn",
+    "unicorn/no-array-reduce": "warn",
   },
   typescript: {
     // Disables interface prefixing in favour of
